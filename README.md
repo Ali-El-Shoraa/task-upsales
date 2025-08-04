@@ -2,7 +2,7 @@
 
 >This tutorial explains how to set up the environment and run the frontend, backend, and Prisma Studio step by step, emphasizing that XAMPP is required to run MySQL on the correct port.
 
-##1. Prerequisites
+## 1. Prerequisites
 
 |Tool | Purpose | Proposed Version |
 | :-- | :-- | :-- |
@@ -14,7 +14,7 @@
 >⚠️ **Make sure MySQL in XAMPP is running on the same port specified in the `.env` file (usually 3306).**
 > If you're using a different port (e.g., 3307), modify the `DATABASE_URL` value in both the Frontend and Backend and restart.
 
-##2. Clone the repository
+## 2. Clone the repository
 
 ```bash
 git clone https://github.com/Ali-El-Shoraa/task-upsales.git
@@ -51,7 +51,7 @@ CLOUDINARY_API_SECRET="zzzz"
 ```
 > Change the password or port if the default values don't match your XAMPP setup.
 
-##5. Installing Credentials
+## 5. Installing Credentials
 
 ### Backend
 
