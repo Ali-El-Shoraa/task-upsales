@@ -7,7 +7,6 @@ import { generateToken } from "../libs/generateToken.ts";
 
 const prisma = new PrismaClient();
 
-// أنواع خاصة بالـRequest مع بيانات المستخدم
 interface AuthenticatedRequest extends Request {
   userId?: number;
 }
@@ -17,7 +16,6 @@ export const signup = async (
   res: Response
 ): Promise<Response> => {
   try {
-    // التحقق من البيانات بالـZod
     const parsed = registerSchema.safeParse(req.body);
 
     if (!parsed.success) {
@@ -26,23 +24,17 @@ export const signup = async (
     }
     const { fallName, email, password } = parsed.data;
 
-    // التأكد من أن البريد غير موجود مسبقًا
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "البريد الإلكتروني مستخدم بالفعل" });
+      return res.status(400).json({ message: "Email already in use" });
     }
 
-    // تشفير كلمة السر
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // إنشاء المستخدم
     const user = await prisma.user.create({
       data: { fallName, email, password: hashedPassword, profilePic: "" },
     });
 
-    // توليد التوكن
     const token = generateToken(user.id);
 
     return res.status(201).json({
@@ -57,13 +49,12 @@ export const signup = async (
     });
   } catch (error) {
     console.error("Signup Error:", error);
-    return res.status(500).json({ message: "حدث خطأ في التسجيل" });
+    return res.status(500).json({ message: "There was a registration error." });
   }
 };
 
 export const login = async (req: Request, res: Response): Promise<Response> => {
   try {
-    // التحقق من البيانات
     const parsed = loginSchema.safeParse(req.body);
     if (!parsed.success) {
       const firstError = parsed.error.issues[0];
@@ -73,16 +64,12 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return res
-        .status(401)
-        .json({ message: "البريد الإلكتروني أو كلمة السر خاطئة" });
+      return res.status(401).json({ message: "Incorrect email or password" });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return res
-        .status(401)
-        .json({ message: "البريد الإلكتروني أو كلمة السر خاطئة" });
+      return res.status(401).json({ message: "Incorrect email or password" });
     }
 
     const token = generateToken(user.id);
@@ -100,7 +87,7 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
     });
   } catch (error) {
     console.error("Login Error:", error);
-    return res.status(500).json({ message: "حدث خطأ في تسجيل الدخول" });
+    return res.status(500).json({ message: "There was an error logging in." });
   }
 };
 
@@ -109,26 +96,17 @@ export const logout = async (
   res: Response
 ): Promise<Response> => {
   try {
-    // لكي تكون آمنًا، بعض الأنظمة تحذف التوكن من جهة العميل فقط (عادة عبر الريأكت أو الـfrontend)
-    // يمكنك هنا إرسال رسالة تأكيد فقط
     return res.json({
       message:
         "Logged out successfully. Please delete your token on client side.",
     });
   } catch (error) {
     console.error("Logout error:", error);
-    return res.status(500).json({ message: "حدث خطأ أثناء تسجيل الخروج" });
+    return res
+      .status(500)
+      .json({ message: "An error occurred while logging out." });
   }
 };
-
-// تعريف نوع Request مخصص يحتوي على user ضمنه
-interface AuthenticatedUser {
-  id: number;
-  fallName: string;
-  email: string;
-  profilePic?: string;
-  createdAt: Date;
-}
 
 export const checkAuth = async (
   req: AuthenticatedRequest,
@@ -145,7 +123,6 @@ export const checkAuth = async (
       where: { id: req.userId },
     });
 
-    // استخرج التوكن من هيدر Authorization المرسَل مع الطلب (إن وجد)
     const token = req.headers.authorization?.startsWith("Bearer ")
       ? req.headers.authorization.split(" ")[1]
       : null;

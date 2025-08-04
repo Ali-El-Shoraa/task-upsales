@@ -17,14 +17,16 @@ export default function LoginPage() {
     <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">تسجيل الدخول</CardTitle>
-          <CardDescription>أدخل بياناتك للوصول إلى حسابك</CardDescription>
+          <CardTitle className="text-2xl font-bold">Log in</CardTitle>
+          <CardDescription>
+            Enter your details to access your account
+          </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
           <Form method="POST" action="/login">
             <div className="space-y-2">
-              <Label htmlFor="email">البريد الإلكتروني</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 name="email"
@@ -36,12 +38,9 @@ export default function LoginPage() {
 
             <div className="space-y-2 mt-4">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">كلمة المرور</Label>
-                <Link
-                  to="/forgot-password"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  نسيت كلمة المرور؟
+                <Label htmlFor="password">Password</Label>
+                <Link to="/#" className="text-sm text-blue-600 hover:underline">
+                  Forgot your password?
                 </Link>
               </div>
               <Input
@@ -54,7 +53,7 @@ export default function LoginPage() {
             </div>
 
             <Button type="submit" className="w-full mt-6">
-              تسجيل الدخول
+              Log in
             </Button>
           </Form>
 
@@ -63,9 +62,9 @@ export default function LoginPage() {
 
         <CardFooter className="flex justify-center">
           <p className="text-sm text-gray-600">
-            ليس لديك حساب؟{" "}
+            Don't have an account?{" "}
             <Link to="/register" className="text-blue-600 hover:underline">
-              إنشاء حساب جديد
+              Create a new account
             </Link>
           </p>
         </CardFooter>

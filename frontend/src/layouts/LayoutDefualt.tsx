@@ -9,7 +9,16 @@ export default function LayoutDefualt() {
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
 
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
+        staleTime: 0,
+      },
+    },
+  });
 
   return (
     <Suspense fallback={<Spinner />}>
