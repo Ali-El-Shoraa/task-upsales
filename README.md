@@ -1,44 +1,41 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
 # How to Run the Project
 
-> ملف الإرشادات هذا يوضّح طريقة إعداد البيئة وتشغيل الواجهة الأماميّة (Frontend)، الواجهة الخلفيّة (Backend) و Prisma Studio خطوة بخطوة، مع تأكيد ضرورة وجود **XAMPP** لتشغيل MySQL على المنفذ الصحيح.
+>This tutorial explains how to set up the environment and run the frontend, backend, and Prisma Studio step by step, emphasizing that XAMPP is required to run MySQL on the correct port.
 
-## 1. المتطلبات المسبقة
+##1. Prerequisites
 
-| الأداة | الغرض | الإصدار المقترح |
+|Tool | Purpose | Proposed Version |
 | :-- | :-- | :-- |
-| **Node.js** | تشغيل JavaScript/TypeScript | 20+ |
-| **npm** أو **pnpm** | إدارة الحزم | يأتي مع Node |
-| **XAMPP** | حزمة Apache-MySQL-PHP | 8.2+ |
-| **Git** | جلب المستودع | 2.40+ |
+| **Node.js** | Run JavaScript/TypeScript | 20+ |
+| **npm** or **pnpm** | Package Manager | Comes with Node |
+| **XAMPP** | Apache-MySQL-PHP Package | 8.2+ |
+| **Git** | Fetch Repository | 2.40+ |
 
-> ⚠️ **تأكّد من أنّ MySQL في XAMPP يعمل على نفس المنفذ المحدَّد في ملف `.env` (عادةً 3306).**
-> إذا كنت تستخدم منفذاً آخر (مثلاً 3307)، عدّل قيمة `DATABASE_URL` في كلٍّ من Frontend و Backend ثم أعد التشغيل.
+>⚠️ **Make sure MySQL in XAMPP is running on the same port specified in the `.env` file (usually 3306).**
+> If you're using a different port (e.g., 3307), modify the `DATABASE_URL` value in both the Frontend and Backend and restart.
 
-## 2. استنساخ المستودع
+##2. Clone the repository
 
 ```bash
 git clone https://github.com/your-username/your-project.git
 cd your-project
 ```
 
+## 3. Database Setup (XAMPP + MySQL)
 
-## 3. إعداد قاعدة البيانات (XAMPP + MySQL)
+1. Open the XAMPP Control Panel.
+2. Start the MySQL service (make sure there are no port conflicts).
+- Default port: 3306.
+- You can change it from *Config → my.ini*.
+3. Create an empty database (e.g., `movies_db`) via phpMyAdmin or the command line:
 
-1. افتح **XAMPP Control Panel**.
-2. ابدأ خدمة **MySQL** (تأكَّد من عدم وجود تعارض منافذ).
-    - المنفذ الافتراضي: **3306**.
-    - يمكنك تغييره من *Config → my.ini*.
-3. أنشئ قاعدة بيانات فارغة (مثلاً `movies_db`) عبر phpMyAdmin أو سطر الأوامر:
 ```sql
 CREATE DATABASE movies_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
+## 4. Environment File `.env`
 
-## 4. ملف البيئة `.env`
-
-أنشئ ملف `.env` في مجلد **backend** يتضمّن القيم التالية (مثال):
+Create a `.env` file in the **backend** folder containing the following values (example):
 
 ```ini
 # MySQL
@@ -52,10 +49,9 @@ CLOUDINARY_CLOUD_NAME="xxxx"
 CLOUDINARY_API_KEY="yyyy"
 CLOUDINARY_API_SECRET="zzzz"
 ```
+> Change the password or port if the default values don't match your XAMPP setup.
 
-> غيّر كلمة المرور أو المنفذ إذا لم تكن القيم الافتراضيّة مطابقة لإعداد XAMPP لديك.
-
-## 5. تثبيت الاعتمادات
+##5. Installing Credentials
 
 ### Backend
 
@@ -64,7 +60,7 @@ cd backend
 npm install
 ```
 
-**أهم الحزم المثبَّتة**
+**Most important installed packages**
 
 - express, cors, cookie-parser
 - prisma + @prisma/client
@@ -80,7 +76,7 @@ cd ../frontend
 npm install
 ```
 
-**أهم الحزم المثبَّتة**
+**Most important installed packages**
 
 - react, react-router-dom
 - tailwindcss + @tailwindcss/vite
@@ -88,51 +84,42 @@ npm install
 - lucide-react, sonner
 - zod + @hookform/resolvers
 
-
-## 6. ترحيل قاعدة البيانات بـ Prisma
+## 6. Migrate the database with Prisma
 
 ```bash
-# من مجلد backend
+# From a volume backend
 npx prisma migrate dev --name init
-npx prisma generate   # يُنشئ Prisma Client
+npx prisma generate   # create Prisma Client
 ```
+> You can preview the data via **Prisma Studio** later.
 
-> يمكنك معاينة البيانات عبر **Prisma Studio** لاحقاً.
+## 7. Starting Services (3 Terminal Windows)
 
-## 7. تشغيل الخدمات (3 نوافذ Terminal)
-
-| نافذة | المسار | الأمر | الوصف |
+| Window | Path | Command | Description |
 | :-- | :-- | :-- | :-- |
-| **1** | `backend/` | `npm run dev` | يشغّل خادم Express على `localhost:4000` (أو المنفذ المعرّف في `package.json`) |
-| **2** | `frontend/` | `npm run dev` | يشغّل Vite على `localhost:5173` (افتراضي) |
-| **3** | `backend/` | `npx prisma studio` | يفتح Prisma Studio على `localhost:5555` لمعاينة الجداول |
+| **1** | `backend/` | `npm run dev` | Runs Express Server on `localhost:4000` (or the port defined in `package.json`) |
+| **2** | `frontend/` | `npm run dev` | Runs Vite on `localhost:5173` (default) |
+| **3** | `backend/src` | `npx prisma studio` | Opens Prisma Studio on `localhost:5555` to preview the tables |## 8. Testing the App
 
-## 8. تجربة التطبيق
+1. Open your browser at
+`http://localhost:5173` → the React interface.
+2. Upload an image to the Add Movie page to see the integration with **Cloudinary**.
+3. Monitor the Terminal logs for JWT or database errors.
+4. Open `http://localhost:5555` to check the data directly in Prisma Studio.
 
-1. افتح المتصفح على
-`http://localhost:5173` → واجهة React.
-2. ارفع صورة في صفحة إضافة فيلم لترى التكامل مع **Cloudinary**.
-3. راقب سجلات Terminal للتأكّد من عدم وجود أخطاء JWT أو قاعدة البيانات.
-4. افتح `http://localhost:5555` لتتحقّق من البيانات مباشرة في Prisma Studio.
+## 9. Common Tips and Solutions
 
-## 9. نصائح وحلول شائعة
+| Problem | Solution |
+| :-- | :-- || **MySQL Connection Error** | Make sure MySQL is running in XAMPP and that the port, username, and password match `DATABASE_URL`. |
+| **Port Conflict** | Change the MySQL port in XAMPP or modify `DATABASE_URL`. Change the Express port via an environment variable such as `PORT=5000`. |
+| **Unable to Upload Image** | Check the Cloudinary keys in `.env` and your internet connection. |
+| **Prisma Studio Not Showing Data** | Restart it after `npx prisma generate` or `npx prisma db pull`. |
 
-| المشكلة | الحل |
-| :-- | :-- |
-| **خطأ اتصال MySQL** | تأكّد من تشغيل MySQL في XAMPP وأنّ المنفذ واسم المستخدم وكلمة المرور مطابقة لـ `DATABASE_URL`. |
-| **تعارض منافذ** | غيّر منفذ MySQL في XAMPP أو عدّل `DATABASE_URL`. غيّر منفذ Express عبر متغيّر بيئة مثل `PORT=5000`. |
-| **تعذّر رفع صورة** | تحقّق من مفاتيح Cloudinary في `.env` ومن اتصال الإنترنت. |
-| **Prisma Studio لا يظهر البيانات** | أعد تشغيله بعد `npx prisma generate` أو `npx prisma db pull`. |
+## 10. Login Data for Testing
 
-## 10. أوامر مفيدة
+If you would like to test the system using a ready-made account:
 
-```bash
-# إنشاء مستخدم وهمي
-curl -X POST http://localhost:4000/api/auth/register -d '{"email":"test@test.com", "password":"123456", "fallName":"Test User"}'
+- **Email:** `kaaed@example.com`
+- **Password:** `123456`
 
-# إدخال 100 فيلم تجريبي عبر Script SQL
-mysql -u root -p movies_db < seed-movies.sql
-```
-
-> ✨ **مبروك!** الآن أصبح المشروع يعمل بكامل مكوّناته على جهازك المحلي. تأكّد دائماً من تزامن منافذ XAMPP و `.env` لتجنّب أي تعارض.
-
+> You can use this data to log in and test the features available to users.
