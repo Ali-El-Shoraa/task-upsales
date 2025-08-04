@@ -50,7 +50,7 @@ export default function OptimizedImage({
           <>
             <AlertCircle className="h-6 w-6 text-red-500 mb-1" />
             <span className="text-xs text-red-500 text-center">
-              خطأ في الصورة
+              Image error
             </span>
           </>
         ) : (

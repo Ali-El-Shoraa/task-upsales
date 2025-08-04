@@ -9,7 +9,6 @@ interface AuthenticatedRequest extends Request {
 }
 
 const handleImageUpload = async (posterUrl: string): Promise<string> => {
-  // إذا كانت الصورة base64، ارفعها إلى Cloudinary
   if (posterUrl && posterUrl.startsWith("data:image/")) {
     try {
       const uploadResult = await cloudinary.uploader.upload(posterUrl, {
@@ -23,11 +22,9 @@ const handleImageUpload = async (posterUrl: string): Promise<string> => {
       return uploadResult.secure_url;
     } catch (error) {
       console.error("Error uploading image to Cloudinary:", error);
-      // في حالة فشل الرفع، احتفظ بـ base64 كـ fallback
       return posterUrl;
     }
   }
-  // إذا كانت URL عادي، أرجعه كما هو
   return posterUrl;
 };
 
@@ -161,7 +158,6 @@ export const addMovie = async (req: AuthenticatedRequest, res: Response) => {
 
     if (!req.userId) return res.status(401).json({ message: "Unauthorized" });
 
-    // معالجة رفع الصورة إلى Cloudinary
     const processedPosterUrl = posterUrl
       ? await handleImageUpload(posterUrl)
       : null;
@@ -202,7 +198,6 @@ export const updateMovie = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(403).json({ message: "Forbidden: Not your movie" });
     }
 
-    // معالجة رفع الصورة إلى Cloudinary إذا تم تغييرها
     if (updateData.posterUrl && updateData.posterUrl !== movie.posterUrl) {
       updateData.posterUrl = await handleImageUpload(updateData.posterUrl);
     }
@@ -233,10 +228,8 @@ export const deleteMovie = async (req: AuthenticatedRequest, res: Response) => {
       return res.status(403).json({ message: "Forbidden: Not your movie" });
     }
 
-    // حذف الصورة من Cloudinary إذا كانت مرفوعة هناك
     if (movie.posterUrl && movie.posterUrl.includes("cloudinary.com")) {
       try {
-        // استخراج public_id من URL
         const urlParts = movie.posterUrl.split("/");
         const publicIdWithExtension = urlParts[urlParts.length - 1];
         const publicId = `movies/${publicIdWithExtension.split(".")[0]}`;
@@ -244,7 +237,6 @@ export const deleteMovie = async (req: AuthenticatedRequest, res: Response) => {
         await cloudinary.uploader.destroy(publicId);
       } catch (error) {
         console.error("Error deleting image from Cloudinary:", error);
-        // لا نوقف العملية إذا فشل حذف الصورة
       }
     }
 

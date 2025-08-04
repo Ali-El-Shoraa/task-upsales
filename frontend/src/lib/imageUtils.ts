@@ -1,5 +1,3 @@
-// مساعدات للتعامل مع الصور
-
 export const isValidImageUrl = (url: string): boolean => {
   if (!url) return false;
   return (
@@ -11,7 +9,6 @@ export const isValidImageUrl = (url: string): boolean => {
 
 export const getImageSize = (base64: string): number => {
   if (!base64.startsWith("data:")) return 0;
-  // تقدير حجم base64 بالبايت
   return Math.round(base64.length * 0.75);
 };
 
@@ -37,13 +34,12 @@ export const compressBase64Image = (
       const ctx = canvas.getContext("2d");
 
       if (!ctx) {
-        reject(new Error("فشل في إنشاء canvas"));
+        reject(new Error("Failed to create canvas"));
         return;
       }
 
       let { width, height } = img;
 
-      // تقليل الأبعاد مع الحفاظ على النسبة
       if (width > maxWidth || height > maxHeight) {
         const ratio = Math.min(maxWidth / width, maxHeight / height);
         width *= ratio;
@@ -53,10 +49,8 @@ export const compressBase64Image = (
       canvas.width = width;
       canvas.height = height;
 
-      // رسم الصورة
       ctx.drawImage(img, 0, 0, width, height);
 
-      // تحديد نوع الصورة والجودة
       const mimeType = base64.split(";")[0].split(":")[1] || "image/jpeg";
       const compressedBase64 = canvas.toDataURL(mimeType, quality);
 
@@ -64,7 +58,7 @@ export const compressBase64Image = (
     };
 
     img.onerror = () => {
-      reject(new Error("فشل في تحميل الصورة"));
+      reject(new Error("Image loading failed"));
     };
 
     img.src = base64;
