@@ -65,7 +65,7 @@ npm install
 - express, cors, cookie-parser
 - prisma + @prisma/client
 - bcryptjs, jsonwebtoken
-- zod (للتـحقق من البيانات)
+- zod (To verify data)
 - multer, cloudinary
 
 
